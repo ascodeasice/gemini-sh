@@ -23,7 +23,7 @@ SYSTEM_PROMPT="System prompt: please respond in traditional chinese #zh-TW, unle
 XCLIP_PATH="$(which xclip)"
 text=""
 
-echo "使用 help 來查看幫助。使用 exit 退出。"
+echo "使用 help 來查看指令。使用 exit 退出。"
 
 while true; do
   read -erp "請輸入您的問題：" question
