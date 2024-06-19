@@ -20,27 +20,47 @@ fi
 
 API_URL="https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}"
 SYSTEM_PROMPT="System prompt: please respond in traditional chinese #zh-TW, unless the term is a jargon or is better for staying in English."
+XCLIP_PATH="$(which xclip)"
+text=""
+
+echo "使用 help 來查看幫助。使用 exit 退出。"
 
 while true; do
   read -erp "請輸入您的問題：" question
-  # TODO: if question is empty, continue
 
-  if [ "$question" == "help" ]; then
-    echo -e "'exit' 退出\n'clear' 清除屏幕\n"
+  # if question is empty, continue
+  if [ -z "$question" ]; then
     continue
   fi
 
-  if [ "$question" == "exit" ]; then
-    echo "再見！"
+  case "$question" in
+  help)
+    echo "
+'exit' 退出
+'clear' 清除屏幕
+'copy' 複製上一次的回答
+'help' 顯示此幫助
+    "
+    continue
+    ;;
+  exit)
     break
-  fi
-
-  if [ "$question" == "clear" ]; then
+    ;;
+  clear)
     clear
     continue
-  fi
-
-  # TODO: copy the last response if the question is copy
+    ;;
+  copy)
+    if [ -z "$XCLIP_PATH" ]; then
+      echo -e "\nxclip 未安裝。\n"
+      continue
+    else
+      echo -n "$text" | xclip -selection clipboard
+      echo -e "\n已複製上一次的回答。\n"
+      continue
+    fi
+    ;;
+  esac
 
   response=$(curl -s "$API_URL" -H "Content-Type: application/json" \
     -d "
