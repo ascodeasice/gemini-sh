@@ -1,5 +1,13 @@
 #!/bin/bash
 
+escape_json_text() {
+  local escaped_text
+  escaped_text=$(echo "$1" | sed 's/\\/\\\\/g' | sed 's/"/\\\"/g')
+
+  echo "$escaped_text"
+  return 0
+}
+
 clear
 
 SCRIPT_DIR=$(dirname "$0")
@@ -65,6 +73,8 @@ while true; do
     ;;
   esac
 
+  escaped_question=$(escape_json_text "$question")
+
   request_body="
       {
         \"contents\": [
@@ -79,11 +89,12 @@ while true; do
           $chat_history
           {
             \"role\":\"user\",
-            \"parts\": [{\"text\":\"$question\"}]
+            \"parts\": [{\"text\":\"$escaped_question\"}]
           }
         ]
       }
       "
+
   response=$(curl -s "$API_URL" -H "Content-Type: application/json" -d "$request_body")
 
   text=$(echo "$response" | jq -r '.candidates[0].content.parts[0].text')
@@ -94,8 +105,9 @@ while true; do
   if [ "$text" = "null" ]; then
     echo "沒有收到回應。response: $response"
   else
-    new_lines="{\"role\":\"user\",\"parts\":[{\"text\":\"$question\"}]},
-{\"role\":\"model\",\"parts\":[{\"text\":\"$text\"}]}, "
+    escaped_text=$(escape_json_text "$text")
+    new_lines="{\"role\":\"user\",\"parts\":[{\"text\":\"$escaped_question\"}]},
+    {\"role\":\"model\",\"parts\":[{\"text\":\"${escaped_text}\"}]},"
     echo "$new_lines" >>"$CHAT_HISTORY_FILE"
     chat_history+="$new_lines"
   fi
