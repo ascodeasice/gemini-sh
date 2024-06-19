@@ -5,11 +5,14 @@ clear
 SCRIPT_DIR=$(dirname "$0")
 
 API_KEY_FILE="$SCRIPT_DIR/gemini_api_key.txt"
+CHAT_HISTORY_FILE="$SCRIPT_DIR/chat_history.txt"
 
 if [ ! -f "$API_KEY_FILE" ]; then
   echo "API 金鑰文件不存在。請創建一個包含 API 金鑰的文件: $API_KEY_FILE"
   exit 1
 fi
+
+chat_history=$(cat "$CHAT_HISTORY_FILE")
 
 GEMINI_API_KEY=$(cat "$API_KEY_FILE")
 
@@ -62,8 +65,7 @@ while true; do
     ;;
   esac
 
-  response=$(curl -s "$API_URL" -H "Content-Type: application/json" \
-    -d "
+  request_body="
       {
         \"contents\": [
           {
@@ -74,13 +76,15 @@ while true; do
             role: \"model\",
             parts: [{ text: \"Understood.\"}]
           },
+          $chat_history
           {
             \"role\":\"user\",
             \"parts\": [{\"text\":\"$question\"}]
           }
         ]
       }
-      ")
+      "
+  response=$(curl -s "$API_URL" -H "Content-Type: application/json" -d "$request_body")
 
   text=$(echo "$response" | jq -r '.candidates[0].content.parts[0].text')
   echo -e "====================\n"
@@ -89,6 +93,12 @@ while true; do
 
   if [ "$text" = "null" ]; then
     echo "沒有收到回應。response: $response"
+  else
+    new_lines="{\"role\":\"user\",\"parts\":[{\"text\":\"$question\"}]},
+{\"role\":\"model\",\"parts\":[{\"text\":\"$text\"}]}, "
+    echo "$new_lines" >>"$CHAT_HISTORY_FILE"
+    chat_history+="$new_lines"
   fi
+
   echo -e "\n"
 done
