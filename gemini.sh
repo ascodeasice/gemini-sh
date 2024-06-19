@@ -30,14 +30,15 @@ if [ -z "$GEMINI_API_KEY" ]; then
 fi
 
 API_URL="https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}"
-SYSTEM_PROMPT="System prompt: please respond in traditional chinese #zh-TW, unless the term is a jargon or is better for staying in English."
+SYSTEM_PROMPT="System prompt: you're a llm assistant, please always respond in traditional chinese #zh-TW in every response, unless the term is a jargon or is better for staying in English."
 XCLIP_PATH="$(which xclip)"
 text=""
 
 echo "使用 help 來查看指令。使用 exit 退出。"
 
 while true; do
-  read -erp "請輸入您的問題：" question
+  # allow up and down select from history
+  read -r -e -d $'\n' -p '請輸入您的問題：' question;
 
   # if question is empty, continue
   if [ -z "$question" ]; then
@@ -113,4 +114,5 @@ while true; do
   fi
 
   echo -e "\n"
+  history -s "$question"
 done
