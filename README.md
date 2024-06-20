@@ -4,6 +4,21 @@ Chat with Gemini in your terminal
 
 A simple shell script for using gemini api in your terminal. Chat like you're in the web browser.
 
+## Table of contents
+
+- [Why](#why)
+- [Features](#features)
+- [Screenshot](#screenshot)
+- [How to use](#how-to-use)
+- [Dependencies](#dependencies-optional)
+- [Variables](#variables)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Why
+
+Using LLMs in a browser is convenient, but they can sometimes be memory-intensive and require switching between tabs. To address this, I've integrated the free Gemini API into a bash script, creating a lightweight, customizable LLM within my terminal that eliminates the need for context-switching.
+
 ## Features
 
 - Use Gemini API in your terminal, with a chat-like interface

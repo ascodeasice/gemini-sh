@@ -115,7 +115,7 @@ while true; do
     echo "沒有收到回應。response: $response"
   else
     if [ $USE_BAT = "true" ]; then
-      echo "$text" | bat -l md --paging=never --style="numbers,grid" --color=always
+      echo "$text" | bat -l md --paging=never --style="plain" --color=always
     else
       echo "$text" # stays on terminal
     fi
