@@ -29,7 +29,8 @@ if [ -z "$GEMINI_API_KEY" ]; then
   exit 1
 fi
 
-API_URL="https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}"
+MODEL="gemini-1.5-flash"  # gemini-1.5-flash, gemini-1.5-pro, gemini-pro
+API_URL="https://generativelanguage.googleapis.com/v1/models/${MODEL}:generateContent?key=${GEMINI_API_KEY}"
 SYSTEM_PROMPT="System prompt: you're a llm assistant, please always respond in traditional chinese #zh-TW in every response, unless the term is a jargon or is better for staying in English."
 XCLIP_PATH="$(which xclip)"
 text=""
