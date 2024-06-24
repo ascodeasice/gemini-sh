@@ -106,7 +106,11 @@ while true; do
       }
       "
 
-  response=$(curl -s "$API_URL" -H "Content-Type: application/json" -d "$request_body")
+  # NOTE: using the stdin input to prevent curl too long argument list size
+  response=$(curl -s "$API_URL" -H "Content-Type: application/json"  --data-binary @- << EOF
+  $request_body
+EOF
+)
 
   text=$(echo "$response" | jq -r '.candidates[0].content.parts[0].text')
   echo -e "====================\n"
